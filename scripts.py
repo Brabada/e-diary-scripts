@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404
 def get_schoolkid(kid_name):
     try:
         if not kid_name:
-            raise RuntimeError
+            raise ValueError
         schoolkid = Schoolkid.objects.get(full_name__contains=kid_name)
     except django.core.exceptions.MultipleObjectsReturned:
         logging.error(f"Ошибка! По запросу {kid_name} найдено несколько "
