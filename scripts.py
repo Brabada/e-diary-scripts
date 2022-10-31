@@ -10,22 +10,9 @@ from django.shortcuts import get_object_or_404
 
 
 def get_schoolkid(kid_name):
-    try:
-        if not kid_name:
-            raise ValueError
-        schoolkid = Schoolkid.objects.get(full_name__contains=kid_name)
-    except django.core.exceptions.MultipleObjectsReturned:
-        logging.error(f"Ошибка! По запросу {kid_name} найдено несколько "
-                      "результатов. Уточните имя.")
-        sys.exit(1)
-    except django.core.exceptions.ObjectDoesNotExist:
-        logging.error(f"Ошибка! По запросу {kid_name} никого не найдено.\n"
-                      "Возможно вы допустили опечатку.\n"
-                      "Название должно быть в формате ФИО или ФИ.")
-        sys.exit(1)
-    except RuntimeError:
-        logging.error(f"Строка с ФИО не должна быть пустой.")
-        sys.exit(1)
+    if not kid_name:
+        raise ValueError("Строка с ФИО не должна быть пустой.")
+    schoolkid = Schoolkid.objects.get(full_name__contains=kid_name)
     return schoolkid
 
 
@@ -109,6 +96,19 @@ def create_commendation(kid_name, subject):
 
 
 def fix_all(kid_name, subject):
-    fix_marks(kid_name)
-    remove_chastisements(kid_name)
-    create_commendation(kid_name, subject)
+    try:
+        fix_marks(kid_name)
+        remove_chastisements(kid_name)
+        create_commendation(kid_name, subject)
+    except django.core.exceptions.MultipleObjectsReturned:
+        logging.error(f"Ошибка! По запросу {kid_name} найдено несколько "
+                      "результатов. Уточните имя.")
+        sys.exit(1)
+    except django.core.exceptions.ObjectDoesNotExist:
+        logging.error(f"Ошибка! По запросу {kid_name} никого не найдено.\n"
+                      "Возможно вы допустили опечатку.\n"
+                      "Название должно быть в формате ФИО или ФИ.")
+        sys.exit(1)
+    except ValueError as val_err:
+        logging.error(val_err.args)
+        sys.exit(1)
