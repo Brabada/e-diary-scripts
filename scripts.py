@@ -1,12 +1,12 @@
-import random
 import logging
+import random
 import sys
 
+import django.core.exceptions
 from datacenter.models import Schoolkid, Mark, Commendation, Lesson, \
     Chastisement, Subject
-from django.shortcuts import get_object_or_404
 from django.http import Http404
-import django.core.exceptions
+from django.shortcuts import get_object_or_404
 
 
 def get_schoolkid(kid_name):
